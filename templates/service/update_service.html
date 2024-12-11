@@ -1,0 +1,79 @@
+{% extends 'base_home.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/home_head.html' %}
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="#!">CREOVATE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'freelance_homepage' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">My Wallet</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle disabled" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#!">All</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="#!">Home Design</a></li>
+                            <li><a class="dropdown-item" href="#!">Logo Design</a></li>
+                            <li><a class="dropdown-item" href="#!">Software Developer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <div class="dropdown text-end">
+                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img src="{{ request.user.image_profile.url }}" alt="mdo" width="40" height="43" class="rounded-circle">
+                        </a>
+                        <ul class="dropdown-menu text-small" style="">
+                          <li><a class="dropdown-item" href="{% url 'profile_freelance' username=request.user.username %}">Profile</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li>
+                              <form method="POST" action="{% url 'logout' %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="dropdown-item">Sign Out</button>
+                              </form>
+                          </li>
+                        </ul>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="text-center my-5">
+        <img src="{{ service.service_image.url }}" class="rounded" alt="..." width="30%">
+      </div>
+
+    <form class="container col-6 col-md-6 col-sm-9 mb-5" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Title</label>
+          {{ form.title }}
+        </div>
+        <div class="mb-3">
+            <label for="floatingTextarea2">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Price</label>
+          {{ form.price }}
+        </div>
+        <div class="mb-3">
+            <label for="disabledSelect" class="form-label">Category</label>
+            {{ form.category }}
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Image</label>
+            {{ form.service_image }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Service</button>
+    </form>
+    
+    {% include 'footer/home_footer.html' %}
+{% endblock %}

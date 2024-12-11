@@ -1,0 +1,132 @@
+{% extends 'base_home.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/home_head.html' %}
+{% endblock %}
+
+{% block content %}
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="#!">CREOVATE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'freelance_homepage' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">My Wallet</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item {% if selected_categories == 'All' %} active {% endif %}" href="?category=All">All</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item {% if selected_categories == 'Home Design' %} active {% endif %}" href="?category=Home Design">Home design</a></li>
+                            <li><a class="dropdown-item{% if selected_categories == 'Logo Design' %} active {% endif %}" href="?category=Logo Design">Logo Design</a></li>
+                            <li><a class="dropdown-item {% if selected_categories == 'Software Developer' %} active {% endif %}" href="?category=Software Developer">Software Developer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <div class="dropdown text-end">
+                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img src="{{ request.user.image_profile.url }}" alt="profile-image" width="40" height="43" class="rounded-circle">
+                        </a>
+                        <ul class="dropdown-menu text-small" style="">
+                          <li><a class="dropdown-item" href="{% url 'profile_freelance' username=request.user.username %}">Profile</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li>
+                              <form method="POST" action="{% url 'logout' %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="dropdown-item">Sign Out</button>
+                              </form>
+                          </li>
+                        </ul>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container col-xxl-8 px-4 py-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+          <div class="col-10 col-sm-8 col-lg-6">
+            <img src="https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-600nw-1768126784.jpg" class="d-block mx-lg-auto img-fluid rounded-4" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+          </div>
+          <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Welcome Creative Freelancers!</h1>
+            <p class="lead">Discover exciting opportunities and create amazing work with our global community of freelancers. Be part of the change and make your dreams come true today!</p>
+          </div>
+        </div>
+    </div>
+
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+
+            <div class="px-4 py-5 my-5 text-center">
+                <img class="d-block mx-auto mb-4" src="https://www.sterlingbackcheck.ca/wp-content/uploads/2024/10/Selfcheck-Persson.png" alt="" width="320" height="320">
+                <h1 class="display-5 fw-bold text-body-emphasis">Your service at Creovate</h1>
+                <div class="col-lg-6 mx-auto">
+                  <p class="lead mb-4">Here are the services that you have uploaded to the Creovate website. Be sure to update and manage your services to keep them attractive to potential clients.</p>
+                  <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                      <a href="{% url 'add_service' username=request.user.username %}">
+                          <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Add Services</button>
+                      </a>
+                  </div>
+                </div>
+              </div>
+    
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="service-section">
+              {% for service in services %}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ service.service_image.url }}" alt="service-image">
+                        <div class="card-body">
+                            <p class="card-text">{{ service.title }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'update_service' slug=service.slug %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#delete-modal-{{ service.slug }}">Delete</button>
+                                    <div class="modal fade" id="delete-modal-{{ service.slug }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ service.slug }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header"
+                                                <h5 class="modal-title" id="deleteModalLabel-{{ service.slug }}">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the service <strong>{{ service.title }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <!-- Cancel Button -->
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <!-- Confirm Delete Button -->
+                                                <form method="POST" action="{% url 'delete_service' slug=service.slug %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                             
+                            </div>                             
+                            <small class="text-body-secondary">Rp.{{ service.price }}</small>                         
+                        </div>                     
+                    </div>                 
+                </div>
+                  </div>                   
+              {% empty %}
+                  <div class="container">
+                      <h2 class="text-center">No services available</h2>
+                      <h2 class="text-center">Add a service to get started</h2>
+                      <img class="d-block mx-auto my-5" src="https://www.hudle.in/icons/home/communityStep-1.png" alt="no-service-image" width="250" height="250">
+                  </div>
+              {% endfor %}
+        </div>
+        </div>
+      </div>
+    
+    {% include 'footer/home_footer.html' %}
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base_login.html' %}
+{% load static %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container">
+	      <a class="navbar-brand" href="{% url 'landing' %}">CREOVATE.</a>
+	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="oi oi-menu"></span> Menu
+	      </button>
+
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav ml-auto">
+	            <li class="nav-item active"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+	            <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">SignUp</a></li>
+	             <li class="nav-item"><a href="{% url 'landing' %}" class="nav-link">Go Home</a></li>
+                <li class="nav-item cta mr-md-2"><a href="{% url 'loginFreelance' %}" class="nav-link">Login as freelancer</a></li>
+                
+                
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    <!-- END nav -->
+    
+    
+    
+    <div class="hero-wrap" style="background-image: url('{% static "images/bg_1.jpg" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-start" data-scrollax-parent="true">
+          <div class="col-lg-6 col-md-6 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"> Creovate<br><span>Freelance Creativity </span></h1>
+            <p class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="icon-calendar mr-2"></span>Connecting Creators, Innovators, and Visionaries</p>
+              
+              {% if messages %}
+                  <div class="container mt-3">
+                      {% for message in messages %}
+                        <div class="alert alert-danger d-flex" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      {% endfor %}
+                  </div>
+              {% endif %}
+            
+          </div>
+          <div class="col-lg-2 col"></div>
+          <div class="col-lg-4 col-md-6 mt-0 mt-md-5">
+          
+          	<form class="request-form ftco-animate my-5" method="POST">
+          		<h2 class="text-center">Creovate</h2>
+                        {% csrf_token %}
+	    				<div class="form-group">
+                            {{ form.username }}
+	    				</div>
+                
+                        <div class="form-group">
+                            {{ form.password }}
+	    				</div>
+                
+                        <div class="form-group text-center">
+	    					<a class="icon-link icon-link-hover" href="{% url 'forgotPassword' %}">
+                                Forgot Your password
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-lg" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.475 5.458c-.284 0-.514-.237-.47-.517C4.28 3.24 5.576 2 7.825 2c2.25 0 3.767 1.36 3.767 3.215 0 1.344-.665 2.288-1.79 2.973-1.1.659-1.414 1.118-1.414 2.01v.03a.5.5 0 0 1-.5.5h-.77a.5.5 0 0 1-.5-.495l-.003-.2c-.043-1.221.477-2.001 1.645-2.712 1.03-.632 1.397-1.135 1.397-2.028 0-.979-.758-1.698-1.926-1.698-1.009 0-1.71.529-1.938 1.402-.066.254-.278.461-.54.461h-.777ZM7.496 14c.622 0 1.095-.474 1.095-1.09 0-.618-.473-1.092-1.095-1.092-.606 0-1.087.474-1.087 1.091S6.89 14 7.496 14"/>
+                                </svg>
+                            </a>
+	    				</div>
+                    
+	            <div class="form-group">
+	               <button type="submit" class="btn btn-primary">SignIn</button>
+	            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+{% endblock %}

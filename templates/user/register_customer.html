@@ -1,0 +1,84 @@
+{% extends 'base_login.html' %}
+{% load static %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container">
+	      <a class="navbar-brand" href="{% url 'landing' %}">CREOVATE.</a>
+	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="oi oi-menu"></span> Menu
+	      </button>
+
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav ml-auto">
+	            <li class="nav-item active"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+	            <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">SignUp</a></li>
+	            <li class="nav-item"><a href="{% url 'landing' %}" class="nav-link">Go Home</a></li>
+                <li class="nav-item cta mr-md-2"><a href="{% url 'loginFreelance' %}" class="nav-link">Login as freelancer</a></li>
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    <!-- END nav -->
+    
+    <div class="hero-wrap" style="background-image: url('{% static "images/bg_1.jpg" %}');" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-start" data-scrollax-parent="true">
+          <div class="col-lg-6 col-md-6 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"> Creovate<br><span>Freelance Creativity </span></h1>
+            <p class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="icon-calendar mr-2"></span>Connecting Creators, Innovators, and Visionaries</p>
+              
+              {% if form.errors %}
+                <div class="alert alert-danger d-flex">
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            <li><strong>{{ field|capfirst }}</strong>: {{ errors|join:", " }}</li>
+                        {% endfor %}
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+            
+          </div>
+          <div class="col-lg-2 col"></div>
+          <div class="col-lg-4 col-md-6 mt-0 mt-md-5">
+          
+          	<form class="request-form ftco-animate my-5" method="POST">
+          		<h2 class="text-center">Join Creovate</h2>
+                        {% csrf_token %}
+	    				<div class="form-group">
+                            {{ form.email }}
+	    				</div>
+                
+                        <div class="form-group">
+                            {{ form.username }}
+	    				</div>
+                
+                        <div class="form-group">
+                            {{ form.first_name }}
+	    				</div>
+                
+                        <div class="form-group">
+                            {{ form.password1 }}
+                            {% if form.password1.help_text %}
+                                <small class="form-text text-muted">{{ form.password1.help_text }}</small>
+                            {% endif %}
+	    				</div>
+                
+                        <div class="form-group">
+                            {{ form.password2 }}
+	    				</div>
+	            <div class="form-group">
+	               <button type="submit" class="btn btn-primary">SignUp</button>
+	            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+{% endblock %}

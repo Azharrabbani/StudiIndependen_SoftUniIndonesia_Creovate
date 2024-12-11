@@ -1,0 +1,72 @@
+{% extends 'base_home.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/profile_header.html' %}
+{% endblock %}
+
+{% block content %}
+    <!-- Header-->
+    {% include 'header/home_header.html' %}
+    
+    <div class="container my-5">
+        <h1>Edit Profile</h1>
+          <hr>
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-3">
+            <div class="text-center">
+              <img src="{{ request.user.image_profile.url }}" class="avatar profile-avatar" alt="avatar" width="180" height="250">
+                <h2>{{ request.user.username }}</h2>
+            </div>
+          </div>
+          
+          <!-- edit form column -->
+          <div class="col-md-9 personal-info">
+            <div class="alert alert-info alert-dismissable">
+              <i class="fa fa-coffee"></i>
+              Please <strong>make sure </strong>again before saving the change
+            </div>
+            <h3>Personal info</h3>
+            
+            <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+              <div class="form-group">
+                <label class="col-lg-3 control-label">First name:</label>
+                <div class="col-lg-8">
+                  {{ form.first_name }}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Last name:</label>
+                <div class="col-lg-8">
+                  {{ form.last_name }}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-md-3 control-label">Username:</label>
+                <div class="col-md-8">
+                  {{ form.username }}
+                </div>
+              </div>
+                <div class="form-group">
+                    <div class="col-md-8">
+                        {{ form.image_profile }}
+                    </div>  
+                </div>
+              <div class="form-group">
+                <label class="col-md-3 control-label"></label>
+                <div class="col-md-8">
+                  <button class="btn btn-primary" type="submit">Save Changes</button>
+                  <span></span>
+                  <a class="btn btn-outline-danger " href="{% url 'profile' username=request.user.username %}">Cancel</a>    
+                </div>
+              </div>
+            </form>
+          </div>
+      </div>
+    </div>
+    <hr>
+    {% include 'footer/home_footer.html' %}
+{% endblock %}
