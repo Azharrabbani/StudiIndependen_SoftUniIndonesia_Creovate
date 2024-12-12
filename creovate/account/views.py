@@ -13,7 +13,7 @@ from unicodedata import category
 
 from creovate.account.forms import RegisterForm, LoginForm, ResetPasswordForm, PasswordResetConfirmForm, \
     UpdateProfileForm
-from creovate.account.models import UserType, Profile
+from creovate.account.models import UserType, Profile, Wallet
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -214,6 +214,23 @@ class PasswordResetView(auth_views.PasswordResetConfirmView):
 class DeleteAccountView(LoginRequiredMixin, DeleteView):
     model = Profile
     success_url = reverse_lazy('login')
+
+
+class WalletView(LoginRequiredMixin, TemplateView):
+    model = Wallet
+    context_object_name = 'wallet'
+    template_name = 'user/customer_wallet.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+
+        profile = Profile.objects.filter(username=username).first()
+        wallet = Wallet.objects.filter(profile=profile).first() if profile else None
+
+        context['wallet'] = wallet
+        context['username'] = username
+        return context
 
 
 

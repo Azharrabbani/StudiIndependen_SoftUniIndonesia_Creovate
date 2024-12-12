@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 
-from creovate.account.models import Profile
+from creovate.account.models import Profile, Wallet
 
 
 class RegisterForm(UserCreationForm):
@@ -145,3 +145,23 @@ class UpdateProfileForm(forms.ModelForm):
         self.fields['image_profile'].widget.attrs.update({
             'class': 'form-control'
         })
+
+
+class UpdateWalletForm(forms.ModelForm):
+    class Meta:
+        model = Wallet
+        fields = ['balance']
+
+    BALANCE_CHOICES = [
+        (2000000, '2000000'),
+        (5000000, '5000000'),
+        (10000000, '10000000'),
+        (20000000, '20000000'),
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['balance'] = forms.ChoiceField(
+            choices=self.BALANCE_CHOICES,
+            widget=forms.Select(attrs={'class': 'form-control'})
+        )
