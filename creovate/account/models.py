@@ -4,6 +4,9 @@ from django.db import models
 
 from PIL import Image
 
+from creovate.service.models import Service
+
+
 # Create your models here.
 
 class UserType(models.Model):
@@ -48,6 +51,19 @@ class Wallet(models.Model):
 
     def __str__(self):
         return f'{self.profile.username} balance: {self.balance}'
+
+
+class Order(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    is_canceled = models.BooleanField(default=False)
+    order_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.profile.username} order: {self.service.title} at -> {self.order_date}'
+
+
 
 
 

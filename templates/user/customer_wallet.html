@@ -78,17 +78,22 @@
                                   {{ wallet.balance }}
                               </div>
                           </div>
+                          <hr>
+                          <div class="row">
+                              <div class="col-sm-12">
+                                  <a class="btn btn-info " href="{% url 'update_wallet' username=request.user.username %}">Add Balance</a>
+                              </div>
+                          </div>
                       {% else %}
-                          <p>Wallet tidak ditemukan untuk pengguna ini.</p>
+                          <p>It seems you don't have Creovate wallet</p>
+                          <p>Please Create the wallet by choosing 'create wallet'</p>
+                          <hr>
+                          <div class="row">
+                              <div class="col-sm-12">
+                                  <a class="btn btn-info " href="{% url 'update_wallet' username=request.user.username %}">Create Wallet</a>
+                              </div>
+                          </div>
                       {% endif %}
-                    
-                      <hr>
-                      <hr>
-                      <div class="row">
-                        <div class="col-sm-12">
-                          <a class="btn btn-info " href="{% url 'update_profile' username=request.user.username %}">Add Balance</a>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>

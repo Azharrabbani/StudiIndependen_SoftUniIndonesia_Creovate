@@ -1,3 +1,4 @@
+from decimal import Decimal
 from lib2to3.fixes.fix_input import context
 from msilib.schema import ListView
 
@@ -12,7 +13,7 @@ from django.contrib import messages
 from unicodedata import category
 
 from creovate.account.forms import RegisterForm, LoginForm, ResetPasswordForm, PasswordResetConfirmForm, \
-    UpdateProfileForm
+    UpdateProfileForm, UpdateWalletForm
 from creovate.account.models import UserType, Profile, Wallet
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -20,6 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views, login
 
 from creovate.service.models import Service, ServiceCategory
+from django.db import transaction
 
 
 # Create your views here.
@@ -36,6 +38,8 @@ class RegisterViewCustomer(CreateView):
         customer_type = get_object_or_404(UserType, id=1)
         user.user_type = customer_type
         user.save()
+
+        Wallet.objects.create(profile=user)
         return super().form_valid(form)
 
 
@@ -50,6 +54,8 @@ class RegisterViewFreelancer(CreateView):
         customer_type = get_object_or_404(UserType, id=2)
         user.user_type = customer_type
         user.save()
+
+        Wallet.objects.create(profile=user)
         return super().form_valid(form)
 
 
@@ -233,4 +239,35 @@ class WalletView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class UpdateWalletView(LoginRequiredMixin, UpdateView):
+    model = Wallet
+    form_class = UpdateWalletForm
+    context_object_name = 'wallet'
+    template_name = 'user/update_wallet.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+
+    @transaction.atomic
+    def form_valid(self, form):
+        try:
+            wallet = Wallet.objects.get(profile=self.request.user)
+            additional_balance = Decimal(form.cleaned_data['balance'])
+            wallet.balance += additional_balance
+            wallet.save()
+
+        except Exception as e:
+            transaction.set_rollback(True)
+            raise e
+
+        return super().form_valid(form)
+
+
+
+
+    def get_success_url(self):
+        username = self.kwargs.get('username')
+        return reverse_lazy('wallet', kwargs={'username':username})
 

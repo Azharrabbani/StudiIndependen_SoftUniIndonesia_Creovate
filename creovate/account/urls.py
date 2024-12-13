@@ -9,14 +9,16 @@ from django.contrib.auth import views as auth_views
 
 from creovate.account.views import RegisterViewCustomer, HomeView, ProfileLoginViewCustomer, ProfileLoginViewFreelancer, \
     RegisterViewFreelancer, FreelanceHomeView, ForgotPasswordView, PasswordResetView, ProfilePageView, \
-    UpdateProfileView, ProfileFreelancePageView, UpdateProfileFreelanceView, DeleteAccountView, WalletView
+    UpdateProfileView, ProfileFreelancePageView, UpdateProfileFreelanceView, DeleteAccountView, WalletView, \
+    UpdateWalletView
 
 urlpatterns = [
     path('home/', include([
         path('', HomeView.as_view(), name='home'),
         path('profile/<str:username>/', ProfilePageView.as_view(), name='profile'),
         path('update-profile/<str:username>/', UpdateProfileView.as_view(), name='update_profile'),
-        path('add-wallet/<str:username>/', WalletView.as_view(), name='add_wallet'),
+        path('add-wallet/<str:username>/', WalletView.as_view(), name='wallet'),
+        path('update-wallet/<str:username>', UpdateWalletView.as_view(), name='update_wallet'),
         path('delete-profile/<int:pk>', DeleteAccountView.as_view(), name='delete_profile'),
     ])),
 
