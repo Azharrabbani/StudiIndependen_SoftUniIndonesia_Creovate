@@ -1,8 +1,12 @@
 from lib2to3.fixes.fix_input import context
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
-from django.shortcuts import render
+
+from django.http import HttpResponseForbidden
+from django.contrib import messages
+
+
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, TemplateView, CreateView, UpdateView, DeleteView
 
@@ -51,6 +55,13 @@ class UpdateServiceView(LoginRequiredMixin, UpdateView):
     template_name = 'service/update_service.html'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.freelance != request.user:
+            messages.error(request, "You don't have permission to edit the service")
+            return redirect('freelance_homepage')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

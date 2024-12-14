@@ -56,12 +56,24 @@ class Wallet(models.Model):
 class Order(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, max_length=500)
     is_canceled = models.BooleanField(default=False)
     order_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.profile.username} order: {self.service.title} at -> {self.order_date}'
+
+
+class Transaction(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True)
+    transaction_date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    user_balance = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.profile.username} - {self.service.title} - {self.user_balance.balance} - {self.transaction_date}'
+
 
 
 
