@@ -7,22 +7,24 @@
 
 {% block content %}
     <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
             <div class="container px-4 px-lg-5">
                 <a class="navbar-brand" href="#!">CREOVATE</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'wallet' username=request.user.username %}">My Wallet</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'customer_wallet' username=request.user.username %}">My Wallet</a></li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
+                            <a class="nav-link dropdown-toggle disabled" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="#!">All</a></li>
                                 <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Home design</a></li>
-                                <li><a class="dropdown-item" href="#!">Logo Design</a></li>
-                                <li><a class="dropdown-item" href="#!">Web Developer</a></li>
+                                <li><a class="dropdown-item {% if selected_categories == 'All'%} active {% endif %} }" href="?category=All">All</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item {% if selected_categories == 'Home Design' %} active {% endif %}" href="?category=Home Design">Home Design</a></li>
+                                <li><a class="dropdown-item {% if selected_categories == 'Logo Design' %} active {% endif %}" href="?category=Logo Design">Logo Design</a></li>
+                                <li><a class="dropdown-item {% if selected_categories == 'Software Developer' %} active {% endif %}" href="?category=Software Developer">Software Developer</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -33,6 +35,7 @@
                             </a>
                             <ul class="dropdown-menu text-small" style="">
                               <li><a class="dropdown-item" href="{% url 'profile' username=request.user.username %}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'history_order' username=request.user.username %}">My Purchase</a></li>
                               <li><hr class="dropdown-divider"></li>
                               <li>
                                   <form method="POST" action="{% url 'logout' %}">
@@ -46,6 +49,15 @@
                 </div>
             </div>
         </nav>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-primary" role="alert">
+                {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
         <!-- Product section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 my-5">
@@ -59,14 +71,54 @@
                         </div>
                         <div class="d-flex gap-2 mb-5">
                               <img src="{{ service.freelance.image_profile.url }}" width="38" class="rounded-circle">
-                              <p>added By {{ service.freelance.username }}</p>
+                              <p>added By <b>{{ service.freelance.username }}</b></p>
                           </div>
                         <p class="lead">{{ service.description }}</p>
                         <div class="d-flex">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                            <button class="btn btn-outline-dark flex-shrink-0" type="button" data-bs-toggle="modal" data-bs-target="#modalCheckout-{{ service.id }}">
                                 Continue
                                 <i class="bi bi-arrow-right"></i>
                             </button>
+                            
+                            <div class="modal fade" id="modalCheckout-{{ service.id }}" tabindex="-1" aria-labelledby="modalSigninLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content rounded-4 shadow">
+                                        <div class="modal-header p-5 pb-4 border-bottom-0">
+                                            <h1 class="fw-bold mb-0 fs-2" id="modalSigninLabel">Proceed To CheckOut</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body p-5 pt-0">
+                                            <form method="POST" action="{% url 'checkout_service' service_id=service.id %}">
+                                                {% csrf_token %}
+                                                <label class="my-3">Service</label>
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control rounded-3" value="{{ service.title }}" disabled>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control rounded-3" value="{{ service.freelance.username }}" disabled>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="number" class="form-control rounded-3" value="{{ service.price }}" disabled>
+                                                </div>
+                                                
+                                                <label class="my-3">Customer</label>
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control rounded-3" value="{{ request.user.username }}" disabled>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="number" class="form-control rounded-3" value="{{ request.user.wallet.balance}}" disabled>
+                                                </div>
+                                                <div class=" mb-3">
+                                                    <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="3" placeholder="Message for Freelancer"></textarea>
+                                                </div>
+                                                
+                                                
+                                                <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Checkout</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

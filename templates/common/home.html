@@ -15,7 +15,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'wallet' username=request.user.username %}">My Wallet</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'customer_wallet' username=request.user.username %}">My Wallet</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -34,6 +34,7 @@
                             </a>
                             <ul class="dropdown-menu text-small" style="">
                               <li><a class="dropdown-item" href="{% url 'profile' username=request.user.username %}">Profile</a></li>
+                              <li><a class="dropdown-item" href="{% url 'history_order' username=request.user.username %}">My Purchase</a></li>
                               <li><hr class="dropdown-divider"></li>
                               <li>
                                   <form method="POST" action="{% url 'logout' %}">
@@ -50,6 +51,15 @@
         
         <!-- Header-->
         {% include 'header/home_header.html' %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
         <!-- Section-->
         <div class="album py-5 bg-body-tertiary">

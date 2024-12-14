@@ -14,7 +14,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'freelance_homepage' %}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#!">My Wallet</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'freelancer_wallet' username=request.user.username %}">My Wallet</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -33,6 +33,7 @@
                         </a>
                         <ul class="dropdown-menu text-small" style="">
                           <li><a class="dropdown-item" href="{% url 'profile_freelance' username=request.user.username %}">Profile</a></li>
+                          <li><a class="dropdown-item" href="{% url 'history_list_freelancer' %}">Order</a></li>
                           <li><hr class="dropdown-divider"></li>
                           <li>
                               <form method="POST" action="{% url 'logout' %}">
@@ -47,9 +48,18 @@
         </div>
     </nav>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <div class="container col-xxl-8 px-4 py-5">
         <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-          <div class="col-10 col-sm-8 col-lg-6">
+          <div class="col-lg-6">
             <img src="https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-600nw-1768126784.jpg" class="d-block mx-lg-auto img-fluid rounded-4" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
           </div>
           <div class="col-lg-6">

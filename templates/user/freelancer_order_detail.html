@@ -1,0 +1,39 @@
+{% extends 'base_home.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/history_order_header.html' %}
+{% endblock %}
+
+{% block content %}
+    
+     <header class="bg-dark text-white py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Customer Order Overview</h1>
+                    <p class="lead fw-normal text-white mb-0">Here are the detail of your customers purchase</p>
+                </div>
+            </div>
+        </header>
+    
+        <!-- Product section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ order.service.service_image.url }}" alt="service=image" /></div>
+                    <div class="col-md-6">
+                        <div class="small mb-1">{{ order.service.category }}</div>
+                        <h1 class="display-5 fw-bolder">{{ order.service.title }}</h1>
+                        <div class="fs-5 mb-3">
+                            <span>Rp.{{ order.service.price }}</span>
+                        </div>
+                        <p>Purchase By <b>{{ order.profile.username}}</b></p>
+                        <p class="lead">{{ order.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+    {% include 'footer/home_footer.html' %}
+    
+{% endblock%}

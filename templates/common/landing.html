@@ -3,7 +3,6 @@
 
 {% block content %}
     {% include 'wave_container.html' %}
-    {% include 'navbar.html' %}
     
     <!-- Caraosel Section -->
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
@@ -16,16 +15,16 @@
           <div class="carousel-item active">
             <div class="container col-xxl-8 px-4 py-5">
                 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                  <div class="col-10 col-sm-8 col-lg-6">
+                  <div class="col-lg-6">
                     <img src="https://newsouthhomes.com.au/wp-content/uploads/2022/12/bespoke-living-room-design.jpg" class="d-block mx-lg-auto img-fluid w-100 rounded-3" alt="home-design-image" loading="lazy">
                   </div>
-                  <div class="col-lg-6">
-                    <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3 heading-title">Home Design</h1>
-                    <p class="lead">Transform your living space with expert Home Design services. We specialize in creating bespoke interiors that combine functionality with modern aesthetics. Whether you're redesigning a room or your entire home, our team will bring your vision to life with innovative solutions tailored to your style. Let us help you craft a home that’s both stunning and uniquely yours.</p>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                      <a href="{% url 'home' %}"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2 button-style">Services</button></a>
-                      <a href="{% url 'registerFreelance' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4 button-style">Join</button></a>
-                    </div>
+                  <div class="col-lg-6 text-center text-lg-start">
+                        <h1 class="display-5 fw-bold heading-title">Home Design</h1>
+                        <p class="lead">Transform your living space with expert Home Design services. We specialize in creating bespoke interiors that combine functionality with modern aesthetics. Whether you're redesigning a room or your entire home, our team will bring your vision to life with innovative solutions tailored to your style. Let us help you craft a home that’s both stunning and uniquely yours</p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <a href="{% url 'home' %}"><button type="button" class="btn btn-primary btn-lg">SignIn</button></a>
+                            <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-secondary btn-lg">SignUp</button></a>
+                        </div>
                   </div>
                 </div>
               </div>
@@ -33,15 +32,15 @@
           <div class="carousel-item">
             <div class="container col-xxl-8 px-4 py-5">
                 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                  <div class="col-10 col-sm-8 col-lg-6">
+                  <div class=" col-lg-6">
                     <img src="{% static 'images/Logo.png' %}" class="d-block mx-lg-auto img-fluid w-100 img-size" alt="Logo-service" loading="lazy">
                   </div>
-                  <div class="col-lg-6">
-                    <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3 heading-title">Logo Design</h1>
+                  <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-5 fw-bold heading-title">Logo Design</h1>
                     <p class="lead">Elevate your brand with professional Logo Design services. We understand the importance of a strong visual identity, and our creative team is here to design logos that leave lasting impressions. From startups to established businesses, we deliver custom, high-quality designs that perfectly capture your brand's essence. Build a brand that stands out with us.</p>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                      <a href="{% url 'home' %}"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2 button-style">Services</button></a>
-                      <a href="{% url 'registerFreelance' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4 button-style">Join</button></a>
+                      <a href="{% url 'home' %}"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2 button-style">SignIn</button></a>
+                      <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4 button-style">SignUp</button></a>
                     </div>
                   </div>
                 </div>
@@ -50,15 +49,15 @@
           <div class="carousel-item">
             <div class="container col-xxl-8 px-4 py-5">
                 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                  <div class="col-10 col-sm-8 col-lg-6">
+                  <div class="col-lg-6">
                     <img src="https://www.netsolutions.com/insights/wp-content/uploads/2022/06/how-to-become-a-software-developer.webp" class="d-block mx-lg-auto img-fluid w-100 img-size rounded-3" alt="software-developer-image" loading="lazy">
                   </div>
-                  <div class="col-lg-6">
-                    <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3 heading-title">Software Developer</h1>
+                  <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-5 fw-bold heading-title">Software Developer</h1>
                     <p class="lead">Empower your digital journey with expert Software Developer services. We specialize in creating robust and user-friendly software tailored to your needs. Whether it’s a web application, mobile app, or system integration, our skilled developers are ready to turn your ideas into reality. Partner with us to bring innovative solutions to your business.</p>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                      <a href="{% url 'home' %}"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2 button-style">Services</button></a>
-                      <a href="{% url 'registerFreelance' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4 button-style">Join</button></a>
+                      <a href="{% url 'home' %}"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2 button-style">SignIn</button></a>
+                      <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4 button-style">SignUp</button></a>
                     </div>
                   </div>
                 </div>

@@ -1,0 +1,124 @@
+{% extends 'base_home.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/history_order_header.html' %}
+    <link rel="stylesheet" href="{% static 'css/order_freelancer.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="page-content page-container" id="page-content">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center position-absolute top-50 start-50 translate-middle">
+                <a class="icon-link mb-2 text-decoration-none" href="{% url 'freelance_homepage' %}">
+                    Done
+                </a>
+                <div class="col-lg-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Your order list</h4>
+                            <p class="card-description">
+                                Choose the order to see more details
+                            </p>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            User
+                                        </th>
+                                        <th>
+                                            First name
+                                        </th>
+                                        <th>
+                                            Service
+                                        </th>
+                                        <th>
+                                            Price
+                                        </th>
+                                        <th>
+                                            Category
+                                        </th>
+                                        <th>
+                                            Order Date
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                    {% for history in user_order %}
+                                        <tr onclick="window.open('{% url "history_list_customer" pk=history.id%}', '_blank')" style="cursor: pointer;">
+                                            <td class="py-1">
+                                                <img src="{{ history.profile.image_profile.url }}" alt="customer-image" class="rounded-circle" width="35" height="40" >
+                                            </td>
+                                            <td>
+                                                {{ history.profile.username }}
+                                            </td>
+                                            <td>
+                                                {{ history.service.title }}
+                                            </td>
+                                            <td>
+                                                {{ history.service.price }}
+                                            </td>
+                                            <td>
+                                                {{ history.service.category }}
+
+                                            </td>
+                                            <td>
+                                                {{ history.order_date|date:"d F Y" }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <nav class="d-flex justify-content-center mt-5">
+                                    <ul class="pagination ">
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if page_obj.number == num %}
+                                                <li class="page-item active">
+                                                    <a class="page-link" href="#">{{ num }}</a>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>{% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>             
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

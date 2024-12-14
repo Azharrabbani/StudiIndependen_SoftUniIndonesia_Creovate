@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block header %}
-    {% include 'head/home_head.html' %}
+    {% include 'head/update_service.html' %}
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'freelance_homepage' %}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#!">My Wallet</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'freelancer_wallet' username=request.user.username %}">My Wallet</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle disabled" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Category</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -47,10 +47,10 @@
     </nav>
 
     <div class="text-center my-5">
-        <img src="{{ service.service_image.url }}" class="rounded" alt="..." width="30%">
+        <img src="{{ service.service_image.url }}" class="rounded img-fluid" alt="service-image">
       </div>
 
-    <form class="container col-6 col-md-6 col-sm-9 mb-5" method="POST" enctype="multipart/form-data">
+    <form class="container  col-md-6 col-sm-9 mb-5" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Title</label>
@@ -72,7 +72,9 @@
             <label for="exampleInputEmail1" class="form-label">Image</label>
             {{ form.service_image }}
         </div>
-        <button type="submit" class="btn btn-primary">Update Service</button>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary btn-lg mt-3">Update Service</button>
+        </div>
     </form>
     
     {% include 'footer/home_footer.html' %}
