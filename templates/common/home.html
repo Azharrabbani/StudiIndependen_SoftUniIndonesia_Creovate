@@ -26,6 +26,13 @@
                                 <li><a class="dropdown-item {% if selected_categories == 'Software Developer' %} active {% endif %}" href="?category=Software Developer">Software Developer</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <form method="GET" action="{% url 'home' %}" class="d-flex mx-3">
+                                <input type="text" name="q" class="form-control me-2" placeholder="Search services..." value="{{ request.GET.q|default:'' }}">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
+                        </li>
+                    
                     </ul>
                     <div class="d-flex">
                         <div class="dropdown text-end">
@@ -48,59 +55,121 @@
                 </div>
             </div>
         </nav>
+    
+    
         
         <!-- Header-->
-        {% include 'header/home_header.html' %}
+        <div class="container col-xxl-8 px-4 py-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+          <div class="col-lg-6">
+            <img src="https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-600nw-1768126784.jpg" class="d-block mx-lg-auto img-fluid rounded-4" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+          </div>
+          <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Welcome Creovaters!!</h1>
+            <p class="lead">At Creovate, you can find a wide range of professional services designed to bring your amazing ideas to life. Explore endless opportunities, find innovative solutions, and achieve success with our community today!</p>
+          </div>
+        </div>
+    </div>
     
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger" role="alert">
-                {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
 
         <!-- Section-->
         <div class="album py-5 bg-body-tertiary">
-    <div class="container">
-
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          {% for service in services %}
-              <div class="col">
-                  <div class="card shadow-sm">
-                      <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ service.service_image.url }}" alt="service-image">
-                      <div class="card-body">
-                          <p class="card-text">{{ service.title }}</p>
-                          <div class="d-flex gap-2 mb-3">
-                              <img src="{{ service.freelance.image_profile.url }}" width="38" class="rounded-circle">
-                              <p>added By {{ service.freelance.username }}</p>
-                          </div>
-                          
-                          <div class="d-flex justify-content-between align-items-center">
-                              <div class="btn-group">
-                                  <a href="{% url 'service' slug=service.slug %}">
-                                      <button type="button" class="btn btn-sm btn-outline-secondary">Book</button>
-                                  </a>
-                              </div>
-                              <small class="text-body-secondary">Rp.{{ service.price }}</small>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          {% empty %}
-              <div class="container">
-                  <h2 class="text-center">No freelancers are offering this service yet</h2>
-                  <img class="d-block mx-auto my-5" src="https://www.hudle.in/icons/home/communityStep-1.png" alt="no-service-image" width="250" height="250">
-              </div>
-          {% endfor %}
-        
-      </div>
-    </div>
-  </div>
-
+            <div class="container">
+                <h1 class="text-center mb-4">Service</h1>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    {% for service in services %}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ service.service_image.url }}" alt="service-image">
+                                <div class="card-body">
+                                    <p class="card-text">{{ service.title }}</p>
+                                    <div class="d-flex gap-2 mb-3">
+                                        <img src="{{ service.freelance.image_profile.url }}" width="38" class="rounded-circle">
+                                        <p>added By {{ service.freelance.username }}</p>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            <a href="{% url 'service' slug=service.slug %}">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary">Book</button>
+                                            </a>
+                                        </div>
+                                        <small class="text-body-secondary">Rp.{{ service.price }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="container">
+                            <h2 class="text-center">No freelancers are offering this service yet</h2>
+                            <img class="d-block mx-auto my-5" src="https://www.hudle.in/icons/home/communityStep-1.png" alt="no-service-image" width="250" height="250">
+                        </div>
+                    {% endfor %}
+                
+                </div>
+            </div>
+        </div>
     
-      <!-- Footer-->
+        <div class="container marketing my-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-4">
+                    <img class="bd-placeholder-img rounded-circle" width="155" height="130" src="https://st4.depositphotos.com/2024219/28913/i/450/depositphotos_289139744-stock-photo-handsome-man-yellow-background-surprise.jpg">
+                    <h2 class="fw-normal my-3">Wide Range of Services</h2>
+                    <p>Creovate provides a wide range of professional services that can be customized to suit your needs. From design to development, we have a solution for you</p>
+                </div>
+                <div class="col-lg-4">
+                    <img class="bd-placeholder-img rounded-circle" width="155" height="130" src="https://png.pngtree.com/thumb_back/fh260/background/20221109/pngtree-smiling-man-makes-honest-oath-hand-on-heart-standing-blue-photo-image_40610040.jpg">
+                    <h2 class="fw-normal my-3">Connect with Freelancers</h2>
+                    <p>Discover and connect with creative freelancers from around the world who are ready to help you turn your ideas into reality.</p>
+                </div>
+                <div class="col-lg-4">
+                    <img class="bd-placeholder-img rounded-circle" width="155" height="130" src="https://www.shutterstock.com/image-photo/young-buisnessman-wearing-eyeglasses-jacket-600nw-1713757231.jpg">
+                    <h2 class="fw-normal my-3">Limitless Innovation</h2>
+                    <p>With the Creovate community, you can create amazing work and explore innovative opportunities to achieve success</p>
+                </div>
+            </div>
+            
+            <hr class="featurette-divider mb-5">
+            <div class="row featurette my-5">
+                <div class="col-md-7">
+                    <h2 class="featurette-heading fw-normal lh-1">Build your career with Creovate</h2>
+                    <p class="lead">Creovate is a freelance platform that connects you with clients around the world. With easy-to-use features and a growing community, we're here to support you in finding projects that match your skills</p>
+                </div>
+                <div class="col-md-5">
+                    <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="https://t4.ftcdn.net/jpg/02/85/98/31/360_F_285983167_OTSjTSeRhqJ7b4TPxlQ80mC9zTiDCzMQ.jpg">
+                </div>
+            </div>
+            
+            <hr class="featurette-divider my-5">
+            
+            <div class="row featurette">
+                <div class="col-md-7 order-md-2">
+                    <h2 class="featurette-heading fw-normal lh-1">Advantages of Using Creovate</h2>
+                    <p class="lead">Enjoy access to quality projects, secure payments, and tools that help boost your productivity. Creovate helps you manage your work more easily, so you can focus on what you're good at</p>
+                </div>
+                <div class="col-md-5 order-md-1">
+                    <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="https://img.freepik.com/free-photo/close-up-portrait-joyful-young-man_171337-12109.jpg">
+                </div>
+            </div>
+            
+            <hr class="featurette-divider my-5">
+            
+            <div class="row featurette">
+                <div class="col-md-7">
+                    <h2 class="featurette-heading fw-normal lh-1">Join now</h2>
+                    <p class="lead">Start your freelance journey with Creovate today! Sign up and discover new opportunities to grow, create, and earn unlimited income.
+                        Register as a freelancer now and be part of the big change!”</p>
+                </div>
+                <div class="col-md-5">
+                    <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="https://t3.ftcdn.net/jpg/01/92/16/04/360_F_192160468_2ev2JYmocXi7pxbBiPsfNEVwDqmTTLYL.jpg">
+                </div>
+            </div>
+            
+            <hr class="featurette-divider">
+            
+        </div>
+    
+      
     {% include 'footer/home_footer.html' %}
         
 {% endblock %}

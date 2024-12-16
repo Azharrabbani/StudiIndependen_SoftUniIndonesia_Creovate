@@ -25,7 +25,7 @@
                         </ul>
                     </li>
                 </ul>
-                <form class="d-flex">
+                <div class="d-flex">
                     <div class="dropdown text-end">
                         <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                           <img src="{{ request.user.image_profile.url }}" alt="mdo" width="40" height="43" class="rounded-circle">
@@ -35,13 +35,13 @@
                           <li><hr class="dropdown-divider"></li>
                           <li>
                               <form method="POST" action="{% url 'logout' %}">
-                                  {% csrf_token %}
-                                  <button type="submit" class="dropdown-item">Sign Out</button>
+                                      {% csrf_token %}
+                                      <button type="submit" class="dropdown-item">Sign Out</button>
                               </form>
                           </li>
                         </ul>
                       </div>
-                </form>
+                </div>
             </div>
         </div>
     </nav>

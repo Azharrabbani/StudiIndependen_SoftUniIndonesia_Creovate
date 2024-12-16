@@ -3,6 +3,9 @@ from django.contrib.auth.admin import UserAdmin
 
 from creovate.account.models import Profile, UserType, Wallet, Order
 
+admin.site.site_header = "Creovate Admin Panel"
+admin.site.site_title = "Creovate Admin"
+admin.site.index_title = "Welcome to Creovate Administration"
 
 # Register your models here.
 @admin.register(Profile)

@@ -9,3 +9,6 @@ def about(request):
 
 def services(request):
     return render(request, template_name="common/service.html")
+
+def errorPage(request):
+    return render(request, template_name="error_page.html")

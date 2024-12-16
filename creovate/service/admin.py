@@ -3,6 +3,10 @@ from django.contrib import admin
 from creovate.service.models import Service, ServiceCategory
 
 
+admin.site.site_header = "Creovate Admin Panel"
+admin.site.site_title = "Creovate Admin"
+admin.site.index_title = "Welcome to Creovate Administration"
+
 # Register your models here.
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):

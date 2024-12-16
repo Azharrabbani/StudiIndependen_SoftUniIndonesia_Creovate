@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from creovate.views import landing, about, services
+from creovate.views import landing, about, services, errorPage
 from creovate.account import views
 
 from django.conf.urls.static import static
@@ -31,6 +31,7 @@ urlpatterns = [
     path('services/', services, name='services'),
     path('account/', include('creovate.account.urls')),
     path('services/', include('creovate.service.urls')),
+    path('error/', errorPage, name='error'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

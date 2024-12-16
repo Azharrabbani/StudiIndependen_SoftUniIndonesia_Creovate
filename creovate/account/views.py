@@ -2,7 +2,9 @@ from decimal import Decimal
 from lib2to3.fixes.fix_input import context
 from msilib.schema import ListView
 
+from django.contrib.auth.models import Permission
 from django.contrib.auth.views import LoginView
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -18,9 +20,9 @@ from unicodedata import category
 
 from creovate.account.forms import RegisterForm, LoginForm, ResetPasswordForm, PasswordResetConfirmForm, \
     UpdateProfileForm, UpdateWalletForm
-from creovate.account.models import UserType, Profile, Wallet, Order, Transaction
+from creovate.account.models import UserType, Profile, Wallet, Order
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from django.contrib.auth import views as auth_views, login
 
@@ -46,6 +48,12 @@ class RegisterViewCustomer(CreateView):
         user.user_type = customer_type
         user.save()
 
+        customer_permission = Permission.objects.get(codename='can_access_customer_page')
+        customer_delete_permission = Permission.objects.get(codename='can_delete_customer_page')
+
+        user.user_permissions.add(customer_permission)
+        user.user_permissions.add(customer_delete_permission)
+
         Wallet.objects.create(profile=user)
         return super().form_valid(form)
 
@@ -62,8 +70,20 @@ class RegisterViewFreelancer(CreateView):
         user.user_type = customer_type
         user.save()
 
+        freelancer_permission = Permission.objects.get(codename='can_access_freelancer_page')
+        freelancer_delete_permission = Permission.objects.get(codename='can_delete_freelancer_page')
+
+        user.user_permissions.add(freelancer_permission)
+        user.user_permissions.add(freelancer_delete_permission)
+
         Wallet.objects.create(profile=user)
+        messages.success(self.request, 'Your account has been created.')
         return super().form_valid(form)
+
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error when creating your account.')
+        return super().form_invalid(form)
 
 
 class ProfileLoginViewCustomer(LoginView):
@@ -115,50 +135,72 @@ class ProfileLoginViewFreelancer(LoginView):
         return reverse_lazy('freelance_homepage')
 
 
-class HomeView(LoginRequiredMixin, TemplateView):
+class HomeView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'common/home.html'
+    permission_required = 'account.can_access_customer_page'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        search_query = self.request.GET.get('q', '')
         category_name = self.request.GET.get('category', 'All')
 
-        if category_name == 'All':
-            context['services'] = Service.objects.all()
-        else:
-            context['services'] = Service.objects.filter(category__name = category_name)
+        services = Service.objects.all()
+        if category_name != 'All':
+            services = services.filter(category__name=category_name)
 
+        if search_query:
+            services = services.filter(title__icontains=search_query)
+
+        context['services'] = services
         context['selected_categories'] = category_name
         context['categories'] = ServiceCategory.objects.all()
+        context['search_query'] = search_query  # Simpan untuk menampilkan ulang input
         return context
 
 
-class FreelanceHomeView(LoginRequiredMixin, TemplateView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
+
+
+class FreelanceHomeView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'common/freelancer_homepage.html'
+    permission_required = 'account.can_access_freelancer_page'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # Dapatkan query pencarian
+        search_query = self.request.GET.get('q', '')
         category_name = self.request.GET.get('category', 'All')
 
-        if category_name == 'All':
-            service = Service.objects.filter(freelance=self.request.user)
-        else:
-            service = Service.objects.filter(
-                category__name = category_name,
-                freelance = self.request.user
-            )
+        # Filter layanan berdasarkan kategori dan judul
+        services = Service.objects.filter(freelance=self.request.user)
+        if category_name != 'All':
+            services = services.filter(category__name=category_name)
 
-        context['services'] = service
+        if search_query:
+            services = services.filter(title__icontains=search_query)
+
+        context['services'] = services
         context['selected_categories'] = category_name
         context['categories'] = ServiceCategory.objects.all()
-
+        context['search_query'] = search_query  # Untuk menampilkan ulang input pencarian
         return context
 
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')
 
 
-class ProfilePageView(LoginRequiredMixin, TemplateView):
+
+class ProfilePageView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'user/profile_customer.html'
+    permission_required = 'account.can_access_customer_page'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -166,9 +208,16 @@ class ProfilePageView(LoginRequiredMixin, TemplateView):
         context['username'] = username
         return context
 
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
 
-class ProfileFreelancePageView(LoginRequiredMixin, TemplateView):
+
+class ProfileFreelancePageView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'user/profile_freelancer.html'
+    permission_required = 'account.can_access_freelancer_page'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -177,32 +226,52 @@ class ProfileFreelancePageView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UpdateProfileView(LoginRequiredMixin, UpdateView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')
+
+class UpdateProfileView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'user/customer_update_profile.html'
+    permission_required = 'account.can_access_customer_page'
+
+
 
     def get_object(self, queryset=None):
         return self.request.user
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get('username')
         context['username'] = username
         return context
+
 
     def get_success_url(self):
         username = self.kwargs.get('username')
         return reverse_lazy('profile', kwargs={'username':username})
 
 
-class UpdateProfileFreelanceView(LoginRequiredMixin, UpdateView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
+
+
+class UpdateProfileFreelanceView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'user/freelancer_update_profile.html'
+    permission_required = 'account.can_access_freelancer_page'
+
+
 
     def get_object(self, queryset=None):
         return self.request.user
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -210,9 +279,16 @@ class UpdateProfileFreelanceView(LoginRequiredMixin, UpdateView):
         context['username'] = username
         return context
 
+
     def get_success_url(self):
         username = self.kwargs.get('username')
         return reverse_lazy('profile_freelance', kwargs={'username':username})
+
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')
 
 class ForgotPasswordView(auth_views.PasswordResetView):
     form_class = ResetPasswordForm
@@ -229,10 +305,12 @@ class DeleteAccountView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('login')
 
 
-class WalletViewCustomer(LoginRequiredMixin, TemplateView):
+class WalletViewCustomer(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     model = Wallet
     context_object_name = 'wallet'
     template_name = 'user/wallet_customer.html'
+    permission_required = 'account.can_access_customer_page'
+
 
     def dispatch(self, request, *args, **kwargs):
         username = self.kwargs.get('username')
@@ -241,10 +319,10 @@ class WalletViewCustomer(LoginRequiredMixin, TemplateView):
         wallet = Wallet.objects.filter(profile=profile).first() if profile else None
 
         if not wallet or profile.username != request.user.username:
-            messages.error(request, "You don't have access to that wallet")
-            return redirect('home')
+            return redirect('error')
 
         return super().dispatch(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -258,10 +336,18 @@ class WalletViewCustomer(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WalletViewFreelancer(LoginRequiredMixin, TemplateView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
+
+
+class WalletViewFreelancer(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     model = Wallet
     context_object_name = 'wallet'
     template_name = 'user/wallet_freelancer.html'
+    permission_required = 'account.can_access_freelancer_page'
+
 
     def dispatch(self, request, *args, **kwargs):
         username = self.kwargs.get('username')
@@ -270,10 +356,10 @@ class WalletViewFreelancer(LoginRequiredMixin, TemplateView):
         wallet = Wallet.objects.filter(profile=profile).first() if profile else None
 
         if not wallet or profile.username != request.user.username:
-            messages.error(request, "You don't have access to that wallet")
-            return redirect('freelance_homepage')
+            return redirect('error')
 
         return super().dispatch(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -286,12 +372,19 @@ class WalletViewFreelancer(LoginRequiredMixin, TemplateView):
         context['username'] = username
         return context
 
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')
 
-class UpdateWalletViewCustomer(LoginRequiredMixin, UpdateView):
+
+class UpdateWalletViewCustomer(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Wallet
     form_class = UpdateWalletForm
     context_object_name = 'wallet'
     template_name = 'user/update_wallet_customer.html'
+    permission_required = 'account.can_access_customer_page'
+
 
     def dispatch(self, request, *args, **kwargs):
         username = self.kwargs.get('username')
@@ -300,13 +393,14 @@ class UpdateWalletViewCustomer(LoginRequiredMixin, UpdateView):
         wallet = Wallet.objects.filter(profile=profile).first() if profile else None
 
         if not wallet or profile.username != request.user.username:
-            messages.error(request, "You don't have access to that wallet")
-            return redirect('home')
+            return redirect('error')
 
         return super().dispatch(request, *args, **kwargs)
 
+
     def get_object(self, queryset=None):
         return self.request.user
+
 
     @transaction.atomic
     def form_valid(self, form):
@@ -321,17 +415,26 @@ class UpdateWalletViewCustomer(LoginRequiredMixin, UpdateView):
             raise e
 
         return super().form_valid(form)
+
 
     def get_success_url(self):
         username = self.kwargs.get('username')
         return reverse_lazy('customer_wallet', kwargs={'username':username})
 
 
-class UpdateWalletViewFreelancer(LoginRequiredMixin, UpdateView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
+
+
+class UpdateWalletViewFreelancer(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Wallet
     form_class = UpdateWalletForm
     context_object_name = 'wallet'
     template_name = 'user/update_wallet_customer.html'
+    permission_required = 'account.can_access_freelancer_page'
+
 
     def dispatch(self, request, *args, **kwargs):
         username = self.kwargs.get('username')
@@ -340,8 +443,7 @@ class UpdateWalletViewFreelancer(LoginRequiredMixin, UpdateView):
         wallet = Wallet.objects.filter(profile=profile).first() if profile else None
 
         if not wallet or profile.username != request.user.username:
-            messages.error(request, "You don't have access to that wallet")
-            return redirect('freelance_homepage')
+            return redirect('error')
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -364,12 +466,21 @@ class UpdateWalletViewFreelancer(LoginRequiredMixin, UpdateView):
 
         return super().form_valid(form)
 
+
     def get_success_url(self):
         username = self.kwargs.get('username')
         return reverse_lazy('freelancer_wallet', kwargs={'username':username})
 
 
-class CheckOutView(LoginRequiredMixin, View):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')
+
+
+class CheckOutView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'account.can_access_customer_page'
+
 
     def post(self, request, service_id):
         service = get_object_or_404(Service, id=service_id)
@@ -395,13 +506,6 @@ class CheckOutView(LoginRequiredMixin, View):
                     description=description
                 )
 
-                Transaction.objects.create(
-                    profile=request.user,
-                    service=service,
-                    amount=service.price,
-                    user_balance=customer,
-                )
-
                 send_mail(
                     subject=f'New Order🚨: {service.title}',
                     message=f'Hi {service.freelance.username}👋,\n\n'
@@ -424,10 +528,18 @@ class CheckOutView(LoginRequiredMixin, View):
             return redirect('service', slug=service.slug)
 
 
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
 
-class HistoryView(LoginRequiredMixin, TemplateView):
+
+
+class HistoryView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     model = Order
     template_name = 'user/customer_history_order.html'
+    permission_required = 'account.can_access_customer_page'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -446,7 +558,15 @@ class HistoryView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class CancelOrderView(LoginRequiredMixin, View):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
+
+
+class CancelOrderView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'account.can_access_customer_page'
+
     def post(self, request, order_id):
         order = get_object_or_404(Order, id=order_id, profile=request.user)
         elapsed_time = now() - order.order_date
@@ -485,9 +605,17 @@ class CancelOrderView(LoginRequiredMixin, View):
             return redirect('history_order', username=request.user.username)
 
 
-class OrderListFreelancerView(LoginRequiredMixin, TemplateView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('login')
+
+
+class OrderListFreelancerView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     model = Order
     template_name = 'user/freelancer_order_list.html'
+    permission_required = 'account.can_access_freelancer_page'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -506,21 +634,35 @@ class OrderListFreelancerView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class DetailOrderListView(LoginRequiredMixin, DetailView):
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')
+
+
+class DetailOrderListView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Order
     context_object_name = 'order'
     template_name = 'user/freelancer_order_detail.html'
+    permission_required = 'account.can_access_freelancer_page'
+
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
 
         if obj.service.freelance != request.user:
-            messages.error(request, "You don't have permission to access the order")
-            return redirect('freelance_homepage')
+            return redirect('error')
         return super().dispatch(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         service_instance = self.object.service
         context['related_orders'] = Order.objects.filter(service=service_instance)
         return context
+
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect('error')
+        return redirect('loginFreelance')

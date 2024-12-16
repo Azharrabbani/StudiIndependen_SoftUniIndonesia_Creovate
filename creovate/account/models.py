@@ -23,6 +23,14 @@ class Profile(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
     image_profile = models.ImageField(default="profile_icon.png",null=True, blank=True)
 
+    class Meta:
+        permissions = [
+            ("can_access_customer_page", "Can access customer page"),
+            ("can_access_freelancer_page", "Can access freelancer page"),
+            ("can_delete_customer_page", "Can Delete customer page"),
+            ("can_delete_freelancer_page", "Can Delete freelancer page"),
+        ]
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -64,15 +72,7 @@ class Order(models.Model):
         return f'{self.profile.username} order: {self.service.title} at -> {self.order_date}'
 
 
-class Transaction(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True)
-    transaction_date = models.DateTimeField(auto_now_add=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    user_balance = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=True, blank=True)
 
-    def __str__(self):
-        return f'{self.profile.username} - {self.service.title} - {self.user_balance.balance} - {self.transaction_date}'
 
 
 
