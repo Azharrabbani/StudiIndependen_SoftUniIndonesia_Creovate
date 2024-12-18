@@ -24,12 +24,12 @@ class RegisterForm(UserCreationForm):
         self.fields['email'].widget.attrs.update({
             'class': 'form-control',
             'required': True,
-            'placeholder': 'Enter a valid email address.',
+            'placeholder': 'Enter a valid email address',
         })
 
         self.fields['username'].widget.attrs.update({
             'required': True,
-            'placeholder': 'Enter username.',
+            'placeholder': 'Enter username',
             'class': 'form-control',
         })
 

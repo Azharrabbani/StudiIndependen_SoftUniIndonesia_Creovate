@@ -58,6 +58,11 @@ class RegisterViewCustomer(CreateView):
         return super().form_valid(form)
 
 
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error when creating your account.')
+        return super().form_invalid(form)
+
+
 class RegisterViewFreelancer(CreateView):
     model = Profile
     form_class = RegisterForm
@@ -201,6 +206,16 @@ class ProfilePageView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView)
     template_name = 'user/profile_customer.html'
     permission_required = 'account.can_access_customer_page'
 
+    def dispatch(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+
+        profile = Profile.objects.filter(username=username).first()
+
+        if profile.username != request.user.username:
+            return redirect('error')
+
+        return super().dispatch(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -217,6 +232,16 @@ class ProfilePageView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView)
 class ProfileFreelancePageView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'user/profile_freelancer.html'
     permission_required = 'account.can_access_freelancer_page'
+
+    def dispatch(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+
+        profile = Profile.objects.filter(username=username).first()
+
+        if profile.username != request.user.username:
+            return redirect('error')
+
+        return super().dispatch(request, *args, **kwargs)
 
 
     def get_context_data(self, **kwargs):
@@ -237,6 +262,16 @@ class UpdateProfileView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
     template_name = 'user/customer_update_profile.html'
     permission_required = 'account.can_access_customer_page'
 
+
+    def dispatch(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+
+        profile = Profile.objects.filter(username=username).first()
+
+        if profile.username != request.user.username:
+            return redirect('error')
+
+        return super().dispatch(request, *args, **kwargs)
 
 
     def get_object(self, queryset=None):
@@ -267,6 +302,16 @@ class UpdateProfileFreelanceView(LoginRequiredMixin, PermissionRequiredMixin, Up
     template_name = 'user/freelancer_update_profile.html'
     permission_required = 'account.can_access_freelancer_page'
 
+
+    def dispatch(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+
+        profile = Profile.objects.filter(username=username).first()
+
+        if profile.username != request.user.username:
+            return redirect('error')
+
+        return super().dispatch(request, *args, **kwargs)
 
 
     def get_object(self, queryset=None):
@@ -539,6 +584,17 @@ class HistoryView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     model = Order
     template_name = 'user/customer_history_order.html'
     permission_required = 'account.can_access_customer_page'
+
+
+    def dispatch(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+
+        profile = Profile.objects.filter(username=username).first()
+
+        if profile.username != request.user.username:
+            return redirect('error')
+
+        return super().dispatch(request, *args, **kwargs)
 
 
     def get_context_data(self, **kwargs):
