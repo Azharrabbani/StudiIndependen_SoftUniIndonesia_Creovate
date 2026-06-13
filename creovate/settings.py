@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'creovate.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'creovate',
-        'USER': 'postgres',
-        'PASSWORD': 'azye1203',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': 'your_database_name',
+        'USER': 'your_username_db',
+        'PASSWORD': 'your_password_db',
+        'HOST': 'your_host',
+        'PORT': 'your_port',
     }
 }
 
